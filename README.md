@@ -1,12 +1,12 @@
-# Distil-Rank: High-Fidelity Compression of Bio-Embeddings
+# Distil-Rank: High-Fidelity Compression of Bio-Embedding Projections
 
 **Abstract**
-Downstream tasks on protein language models (like **ESM-2**) often utilize high-dimensional projection layers that are redundant. This project demonstrates **Distil-Rank**, a pipeline that compresses these **downstream projection layers** by **10x** while recovering **near-perfect functional fidelity (99.8%)** through knowledge distillation on the real data manifold.
+Downstream tasks on protein language models (like **ESM-2**) utilize high-dimensional projection layers that are often redundant. This project demonstrates **Distil-Rank**, a pipeline that compresses these **downstream projection layers** by **10x**. It recovers **near-perfect functional fidelity (99.8%)** through knowledge distillation, exploiting the **low intrinsic dimensionality** of biological embeddings.
 
 ![Results Plot](results/distil_rank_final_report.png)
 
 ## Key Results (Real ESM-2 Data)
-Tested on embeddings from the **ESM-2 (650M)** model.
+Tested on projection layers operating on embeddings from the **ESM-2 (650M)** model.
 
 | Metric | SVD Baseline (Static) | Distil-Rank (Trained) | Improvement |
 |--------|-----------------------|-----------------------|-------------|
@@ -26,4 +26,4 @@ To reproduce the results with synthetic data:
 pip install -r requirements.txt
 python main.py
 \`\`\`
-*(For real data reproduction, download ESM-2 embeddings and place them in the root folder).*
+*(For real-data reproduction, generate ESM-2 embeddings using the provided Colab script and place them in the project root.)*

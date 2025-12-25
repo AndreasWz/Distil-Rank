@@ -6,3 +6,9 @@ embeddings_*.pt
 __pycache__/
 venv/
 .DS_Store
+*.pt
+*.pt
+embeddings_*.pt
+__pycache__/
+venv/
+.DS_Store
