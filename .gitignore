@@ -12,3 +12,8 @@ embeddings_*.pt
 __pycache__/
 venv/
 .DS_Store
+*.pt
+embeddings_*.pt
+__pycache__/
+venv/
+.DS_Store
