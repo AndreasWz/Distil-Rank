@@ -15,10 +15,28 @@ Tested on projection layers operating on embeddings from the **ESM-2 (650M)** mo
 | **Latency (CPU)** | 0.49 ms | **0.06 ms** | **7.91x Speedup** |
 | **Parameters** | 1.64M | 0.16M | **9.9x Compression** |
 
-## Methodology
-1. **SVD Warmstart:** Initialize the student ($W = A \times B$) using Truncated SVD.
-2. **Distillation:** Train the student to minimize combined Loss (Relative MSE + Cosine) against the Teacher using real protein embeddings.
-3. **Robust Benchmarking:** Median latency measurement over 300 runs.
+## Mathematical Foundations
+This approach combines linear algebra with neural knowledge distillation.
+
+### 1. The Eckart-Young-Mirsky Theorem
+A standard projection layer is a dense matrix $W \in \mathbb{R}^{m \times n}$. Standard compression uses **Truncated SVD** to find the optimal rank-$r$ approximation by keeping the largest singular values $\Sigma_r$:
+$$W \approx U_r \Sigma_r V_r^T$$
+This minimizes the Frobenius norm $||W - W_{approx}||_F$, assuming all input directions are equally important.
+
+### 2. Distillation on the Data Manifold
+In biological data, inputs $x$ are not uniformly distributed; they lie on a low-dimensional manifold. **Distil-Rank** factorizes the layer into two smaller matrices $A \in \mathbb{R}^{r \times n}$ and $B \in \mathbb{R}^{m \times r}$:
+$$y_{student} = B(A(x))$$
+We initialize $A$ and $B$ using the SVD components ("Warmstart") to ensure stability:
+$$A_{init} = \sqrt{\Sigma_r} V_r^T, \quad B_{init} = U_r \sqrt{\Sigma_r}$$
+We then train $A, B$ to minimize a **combined loss** on *real data*:
+$$L = \mathcal{L}_{MSE}(y_s, y_t) + \alpha \cdot (1 - \text{cosine}(y_s, y_t))$$
+This allows the student to rotate the SVD basis to align with the actual bio-embedding manifold, recovering fidelity that static SVD loses.
+
+### 3. Complexity Reduction
+By forcing the rank constraint $r \ll \min(m, n)$, we reduce computational complexity quadratically:
+* **Teacher:** $O(m \cdot n)$ operations.
+* **Student:** $O(r(m + n))$ operations.
+* For $m=n=1280$ and $r=64$, this yields a theoretical **~10x reduction** in FLOPs.
 
 ## Quick Start
 To reproduce the results with synthetic data:
