@@ -1,4 +1,3 @@
-cat << 'EOF' > README.md
 # Distil-Rank: High-Fidelity Compression of Bio-Embedding Projections
 
 **Abstract**
