@@ -1,3 +1,4 @@
+cat << 'EOF' > README.md
 # Distil-Rank: High-Fidelity Compression of Bio-Embedding Projections
 
 **Abstract**
@@ -50,6 +51,7 @@ The benchmark automatically detects if real data is available.
 
 The script checks for data files in the root directory:
 
-✅ Real Data Mode: If `embeddings_train.pt` and `embeddings_val.pt` are found, it runs the full benchmark on ESM-2 embeddings (reproducing the 99.8% fidelity result).
+Real Data Mode: If `embeddings_train.pt` and `embeddings_val.pt` are found, it runs the full benchmark on ESM-2 embeddings (reproducing the 99.8% fidelity result).
 
-⚠️ Synthetic Mode: If files are missing, it falls back to a structured synthetic approximation for demonstration purposes.
+Synthetic Mode: If files are missing, it falls back to a structured synthetic approximation for demonstration purposes.
+EOF
