@@ -28,7 +28,7 @@ torch.manual_seed(SEED)
 np.random.seed(SEED)
 
 # Toggle to load real embeddings if available (must provide files)
-USE_REAL_EMBEDDINGS = False
+USE_REAL_EMBEDDINGS = True
 EMB_TRAIN_PATH = "embeddings_train.pt"  # tensor shape [N, INPUT_DIM]
 EMB_VAL_PATH = "embeddings_val.pt"      # tensor shape [N_val, INPUT_DIM]
 
