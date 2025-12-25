@@ -1,26 +1,34 @@
-# Distil-Rank: Low-Rank Distillation for ESM-2
+# Distil-Rank: High-Performance Compression for Bio-Embeddings
 
 **Abstract**
-High-dimensional protein language models like ESM-2 are difficult to deploy in resource-constrained aerospace environments. This project demonstrates **Distil-Rank**, a method to compress attention layers by **24x** while maintaining **>99% functional fidelity** through SVD-initialized knowledge distillation.
+Deploying high-dimensional protein language models (like ESM-2 or ProtT5) in aerospace environments requires extreme efficiency. This project implements **Distil-Rank**, a knowledge distillation pipeline that compresses projection layers by **10x** while achieving **8x faster inference** and recovering **+13.6% functional fidelity** compared to standard mathematical decomposition (SVD).
 
-## Key Results
-Tested on \`facebook/esm2_t6_8M_UR50D\` Attention Query Projections.
+![Results Plot](results/distil_rank_final_report.png)
 
-| Metric | Teacher (Dense) | Student (Low-Rank) | Improvement |
-|--------|-----------------|--------------------|-------------|
-| **Parameters** | 102,400 | 20,800 (Rank 32) | **~5x smaller** |
-| **Latency (CPU)** | ~0.08 ms | ~0.03 ms | **~2.5x faster** |
-| **Fidelity** | 1.000 | **0.998** | Preserved |
+## Key Results (Benchmark)
+Tested on simulated High-Dimensional Embeddings (`dim=1280`, `rank=64`) with non-uniform feature importance (simulating biological signals).
 
-![Training Plot](distil_rank_report.png)
+| Metric | SVD Baseline (Static) | Distil-Rank (Trained) | Improvement |
+|--------|-----------------------|-----------------------|-------------|
+| **Fidelity (Cosine)** | 0.6954 | **0.8316** | **+13.6 points** (Recovery) |
+| **Rel. MSE Error** | 0.7163 | **0.5510** | **-23% Error** |
+| **Latency (CPU)** | 0.47 ms | **0.06 ms** | **7.91x Speedup** |
+| **Parameters** | 1.64M | 0.16M | **9.9x Compression** |
+
+## Why Distillation beats SVD
+Standard **Truncated SVD** minimizes the Frobenius norm of the weight matrix. However, biological data is often sparse or structured (some features matter more). 
+* **SVD** treats all dimensions equally (Fidelity: 69%).
+* **Distil-Rank** learns from the data distribution, focusing capacity on high-importance features, recovering significant performance (Fidelity: 83%).
 
 ## Methodology
-1. **SVD Initialization:** The student network ($W = A \times B$) is initialized using Truncated SVD of the teacher's weights to ensure rapid convergence.
-2. **Distillation:** We freeze the teacher (ESM-2 layer) and train the student to minimize MSE loss on embedding outputs.
-3. **Evaluation:** We measure **Attention Fidelity** (Cosine Similarity) and Inference Latency on CPU.
+1.  **SVD Warmstart:** Initialize the student ($W = A \times B$) using Truncated SVD for stable convergence.
+2.  **Combined Loss:** Optimize relative MSE + Cosine Similarity to maximize directionality alignment.
+3.  **Robust Benchmarking:** Median latency measurement over 300 runs to exclude Python overhead.
 
-## How to run
-\`\`\`bash
-pip install -r requirements.txt
+## Quick Start
+```bash
+# Install dependencies
+pip install torch numpy matplotlib
+
+# Run reproduction script
 python main.py
-\`\`\`

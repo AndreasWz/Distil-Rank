@@ -1,0 +1,16 @@
+{
+  "svd_fidelity": 0.6954303979873657,
+  "svd_rel_mse": 0.716354250907898,
+  "student_pre_fidelity": 0.6954304575920105,
+  "student_post_fidelity": 0.8316042423248291,
+  "student_pre_rel_mse": 0.7163541913032532,
+  "student_post_rel_mse": 0.551052987575531,
+  "teacher_params": 1639680,
+  "student_params": 165120,
+  "compression": 9.930232558139535,
+  "latency_teacher_median_ms": 0.4735699999969256,
+  "latency_student_median_ms": 0.059879000048113085,
+  "train_time_s": 2.688490152359009,
+  "seed": 42,
+  "use_real_embeddings": false
+}
