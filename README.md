@@ -38,10 +38,18 @@ By forcing the rank constraint $r \ll \min(m, n)$, we reduce computational compl
 * **Student:** $O(r(m + n))$ operations.
 * For $m=n=1280$ and $r=64$, this yields a theoretical **~10x reduction** in FLOPs.
 
-## Quick Start
-To reproduce the results with synthetic data:
-\`\`\`bash
-pip install -r requirements.txt
-python main.py
-\`\`\`
-*(For real-data reproduction, generate ESM-2 embeddings using the provided Colab script and place them in the project root.)*
+## Quick Start & Reproduction
+
+The benchmark automatically detects if real data is available.
+
+1. **Install dependencies:**
+   pip install -r requirements.txt
+
+2. **Run Benchmark:**
+   python main.py
+
+The script checks for data files in the root directory:
+
+✅ Real Data Mode: If `embeddings_train.pt` and `embeddings_val.pt` are found, it runs the full benchmark on ESM-2 embeddings (reproducing the 99.8% fidelity result).
+
+⚠️ Synthetic Mode: If files are missing, it falls back to a structured synthetic approximation for demonstration purposes.
