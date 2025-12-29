@@ -1,16 +1,49 @@
 {
-  "svd_fidelity": 0.6398928761482239,
-  "svd_rel_mse": 0.7682472467422485,
-  "student_pre_fidelity": 0.6398928761482239,
-  "student_post_fidelity": 0.998332679271698,
-  "student_pre_rel_mse": 0.7682472467422485,
-  "student_post_rel_mse": 0.05781159922480583,
-  "teacher_params": 1639680,
-  "student_params": 165120,
-  "compression": 9.930232558139535,
-  "latency_teacher_median_ms": 0.4854169999362057,
-  "latency_student_median_ms": 0.061377000292850425,
-  "train_time_s": 3.5728654861450195,
-  "seed": 42,
-  "use_real_embeddings": true
+  "real_data": true,
+  "target_rank": 64,
+  "input_dim": 1280,
+  "experiments": {
+    "Random": {
+      "svd_cosine": 0.46707606315612793,
+      "svd_rel_mse": 0.7818445398919524,
+      "student_cosine": 0.9979479908943176,
+      "student_rel_mse": 0.004089628380135703,
+      "cosine_improvement": 0.5308719277381897,
+      "mse_reduction": 0.9947692563272221,
+      "latency_teacher_ms": 0.5311278400040464,
+      "latency_student_ms": 0.07270233999709792,
+      "speedup": 7.305512312605724,
+      "params_teacher": 1639680,
+      "params_student": 165120,
+      "compression": 9.930232558139535
+    },
+    "Task-Trained": {
+      "svd_cosine": 0.9989274740219116,
+      "svd_rel_mse": 0.0020715040940291595,
+      "student_cosine": 0.9999880790710449,
+      "student_rel_mse": 2.3960665643373403e-05,
+      "cosine_improvement": 0.0010606050491333008,
+      "mse_reduction": 0.9884332038191782,
+      "latency_teacher_ms": 0.5576809000012872,
+      "latency_student_ms": 0.0752265333358082,
+      "speedup": 7.413353710077564,
+      "params_teacher": 1639680,
+      "params_student": 165120,
+      "compression": 9.930232558139535
+    },
+    "Spectral": {
+      "svd_cosine": 0.8465765118598938,
+      "svd_rel_mse": 0.2825621736784266,
+      "student_cosine": 0.9989242553710938,
+      "student_rel_mse": 0.002327563442197644,
+      "cosine_improvement": 0.15234774351119995,
+      "mse_reduction": 0.9917626502801237,
+      "latency_teacher_ms": 0.5703778133344409,
+      "latency_student_ms": 0.07866160332923755,
+      "speedup": 7.251032132502167,
+      "params_teacher": 1639680,
+      "params_student": 165120,
+      "compression": 9.930232558139535
+    }
+  }
 }
