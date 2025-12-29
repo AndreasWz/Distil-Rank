@@ -30,6 +30,8 @@ Tested on projection layers operating on embeddings from the **ESM-2 (650M)** mo
 - **Random Teacher**: Demonstrates distillation's power—even arbitrary projections achieve near-perfect recovery.
 - **Spectral Decay**: Simulates realistic singular value decay patterns found in trained neural networks.
 
+The **singular value spectrum plot** (right panel) reveals why: task-trained weights have sharp spectral decay (energy concentrated in top components), while random weights have flat spectra requiring distillation to recover fidelity.
+
 ## Mathematical Foundations
 This approach combines linear algebra with neural knowledge distillation.
 

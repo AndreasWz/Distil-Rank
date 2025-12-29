@@ -227,6 +227,10 @@ def run_experiment(name, teacher, x_val, get_batch, input_dim, output_dim):
     print(f"Speedup: {lat_t/lat_s:.1f}x | Compression: {params_t/params_s:.1f}x")
     print("-" * 45)
     
+    # Get full singular value spectrum for analysis
+    W = teacher.weight.data
+    _, S_full, _ = torch.linalg.svd(W, full_matrices=False)
+    
     return {
         "svd_cosine": svd_result['cosine'],
         "svd_rel_mse": svd_result['rel_mse'],
@@ -241,6 +245,7 @@ def run_experiment(name, teacher, x_val, get_batch, input_dim, output_dim):
         "params_student": params_s,
         "compression": params_t / params_s,
         "history": history,
+        "singular_values": S_full.numpy(),
     }
 
 
@@ -325,11 +330,13 @@ def main():
     # --- Save Results ---
     os.makedirs(OUT_DIR, exist_ok=True)
     
+    # Exclude non-serializable fields (history, singular_values)
     results_json = {
         "real_data": use_real_data,
         "target_rank": TARGET_RANK,
         "input_dim": input_dim,
-        "experiments": {k: {kk: vv for kk, vv in v.items() if kk != "history"} 
+        "experiments": {k: {kk: vv for kk, vv in v.items() 
+                           if kk not in ("history", "singular_values")} 
                        for k, v in all_results.items()},
     }
     with open(os.path.join(OUT_DIR, "distil_rank_summary.json"), "w") as f:
@@ -350,7 +357,7 @@ def main():
     axes[0].legend()
     axes[0].grid(True, alpha=0.3)
     
-    # Panel 2: Cosine Fidelity Comparison
+    # Panel 2: Cosine Fidelity Comparison (side-by-side bars)
     strategies = list(all_results.keys())
     x_pos = np.arange(len(strategies))
     width = 0.35
@@ -364,23 +371,28 @@ def main():
     axes[1].set_xticks(x_pos)
     axes[1].set_xticklabels(strategies)
     axes[1].set_ylim(0, 1.1)
-    axes[1].set_ylabel("Cosine Fidelity")
-    axes[1].set_title("SVD vs Distil-Rank")
+    axes[1].set_ylabel("Cosine Fidelity (↑ better)")
+    axes[1].set_title("Fidelity: SVD vs Distil-Rank")
     axes[1].legend()
     axes[1].grid(True, alpha=0.3, axis='y')
     
-    # Panel 3: Relative MSE Comparison (lower is better)
-    svd_mse = [all_results[s]['svd_rel_mse'] for s in strategies]
-    stu_mse = [all_results[s]['student_rel_mse'] for s in strategies]
+    # Panel 3: Singular Value Spectrum (explains WHY results differ)
+    for name in strategies:
+        S = all_results[name]['singular_values']
+        # Normalize to show relative decay
+        S_norm = S / S[0]
+        axes[2].plot(S_norm[:200], label=name, color=colors[name], linewidth=1.5, alpha=0.8)
     
-    axes[2].bar(x_pos - width/2, svd_mse, width, label='SVD Baseline', color='gray', alpha=0.7)
-    axes[2].bar(x_pos + width/2, stu_mse, width, label='Distil-Rank', color=[colors[s] for s in strategies])
-    axes[2].set_xticks(x_pos)
-    axes[2].set_xticklabels(strategies)
-    axes[2].set_ylabel("Relative MSE (↓ better)")
-    axes[2].set_title("Error Reduction")
-    axes[2].legend()
-    axes[2].grid(True, alpha=0.3, axis='y')
+    # Mark the truncation point
+    axes[2].axvline(x=TARGET_RANK, color='black', linestyle='--', alpha=0.7, 
+                    label=f'Rank-{TARGET_RANK} cutoff')
+    axes[2].set_xlabel("Singular Value Index")
+    axes[2].set_ylabel("Normalized σᵢ / σ₁")
+    axes[2].set_title("Weight Matrix Spectrum")
+    axes[2].set_yscale('log')
+    axes[2].set_ylim(1e-4, 1.5)
+    axes[2].legend(loc='upper right')
+    axes[2].grid(True, alpha=0.3)
     
     plt.tight_layout()
     plt.savefig(os.path.join(OUT_DIR, "distil_rank_final_report.png"), dpi=150)
